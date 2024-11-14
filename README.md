@@ -120,9 +120,96 @@ that is having an IP address 192.168.0.128 converted to binary give 11000000.101
 
 #### OSI MODEL(OPEN SYSTEM INTERCONNECTION)
 
-This model ia a conception model of how internet works and is divided into seven layers
+This model ia a conception model of how internet works and is divided into seven layers. We can have  the following diagram for the different level of OSI MODEL  
+ 
+   ![image](https://github.com/user-attachments/assets/e55cfd01-ccb8-4a8c-8c8d-92441a21c0aa) 
 
-   ![image](https://github.com/user-attachments/assets/e55cfd01-ccb8-4a8c-8c8d-92441a21c0aa)
+WE should note that  the OSI model is functioning fron sender to receiver and from receiver to sender .SO the explanation under the 7 layers are as follow 
+
+- ##### APPLICATION LAYER
+
+When data is  send from sender to reciever this is the first layer through which information pass..This layer function in sending data to the reiver and the reciever on its side will send back the end user .
+   it layer provide the protocols that allow  software /apps to transmit data exmaples are 
+HTTPS and HTTP,
+FTP ,
+POP & SMTP,
+DNS,
+TELNET,
+DHCP,
+-SMTP
+
+- ##### PRESENTATION LAYER
+
+This layer ensures that data is prepared for the application layer (receiving side) or for the network layer (sending side).It is responsible of some tasks like 
+- data translation
+- Encryption & decryption of data
+- Compression of data
+- Other data presentation items
+
+- ##### SESSION LAYER
+
+This layer creates and maintains the sessions that 02 systems neede inorder to speek to each other ... This layer take in charge the mode of data transmition being  duplex,half duplex and full duplex . This layer defines 
+- when sessions are created and opened
+- How long sessions remain open to sucessfully exchange data
+- when to close sessions
+
+- ##### TRANSPORT LAYER
+
+  Also called as the heart of the OSI layer , this layer use the TCP(Transmition control protocol) and the UDP(User datagram protocol ) ,to manage network traffic between systems and ensure correct data transfers they function also in the followiing ways
+  - On the sending side, it takes data from the session layer and breaks it into segments for the network layer.
+  - On the receiving side, it reassembles the segments from the network layer and passes them on to the session layer.
+
+This layer also handles flow control and error control, regulates transmission speed and requests retransmissions if needed. As we said this layer deals with this 02 maiin protocol that we will discuss below 
+Vide
+ - ###### Transmition control protocol
+
+The transmission control protocol (TCP) is defined as a connection-oriented communication protocol that allows computing devices and applications to send data via a network and verify its delivery, forming one of the crucial pillars of the global internet.
+
+ ![image](https://github.com/user-attachments/assets/5826d112-2d60-4c50-83cc-ae34a7083108) 
+ 
+   example of  transmission control protocol in real life scenarios are 
+  - email
+  - text messaging
+  - file transfers
+
+- ###### USER DATAGRAM PROTOCOL
+User datagram protocol (UDP) is a message-oriented communication protocol that allows computing devices and applications to send data via a network without verifying its delivery, which is best suited to real-time communication and broadcast systems.
+
+![image](https://github.com/user-attachments/assets/5ec01dc3-b2bf-454d-be10-59fdec715531)
+
+ examples of User datagram control protocol in real life are 
+ - DNS lookup
+ - Online games
+ - Videos streaming
+
+Both of these uses  PORT which is used to reach the corresponding device on a particular network
+
+- ##### NETWORK LAYER
+
+This layer decides which path the data will take so  as to reach the receiver in case it is coming from .It si responsible for  
+
+
+
+
+ 
+  
+
+
+
+
+
+
+
+
+
+
+
+   
+   
+  - #### THE PHYSICAL LAYER : This layer describes the  physical connection between devices in a network, here this layer deal with the material through which data is being received  or transfer . examples of device in the  physical connection layer is coax/fiber,wireless,hubs,repeaters
+
+  - #### THE DATA LINK LAYER :  This layer is concern with the division of data send into chunks or pieces of data called frame
+   
     
 
 
