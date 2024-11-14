@@ -186,9 +186,19 @@ Both of these uses  PORT which is used to reach the corresponding device on a pa
 
 - ##### NETWORK LAYER
 
-This layer decides which path the data will take so  as to reach the receiver in case it is coming from .It si responsible for  
+This layer decides which path the data will take so  as to reach the receiver in case it is coming from .its responsible for breaking up transport layer segmenst into smaller network packets foer tranmission and for reassembling those packets on the receining systems 
+
+- ##### DATA LINK LAYER
+
+This layer defines the format of data on the network .It and uses Media acess control for flow control and multiplexing between the 02 systems 
+
+- ##### PHYSICAL LAYER
+
+   This layer describes the  physical connection between devices in a network, here this layer deal with the material through which data is being received  or transfer . examples of device in the  physical connection layer is coax/fiber,wireless,hubs,repeaters
+   SO 
 
 
+this processses generalise how data is being transmitted on the network 
 
 
  
@@ -206,9 +216,8 @@ This layer decides which path the data will take so  as to reach the receiver in
 
    
    
-  - #### THE PHYSICAL LAYER : This layer describes the  physical connection between devices in a network, here this layer deal with the material through which data is being received  or transfer . examples of device in the  physical connection layer is coax/fiber,wireless,hubs,repeaters
 
-  - #### THE DATA LINK LAYER :  This layer is concern with the division of data send into chunks or pieces of data called frame
+  
    
     
 
