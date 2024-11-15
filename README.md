@@ -57,7 +57,6 @@ You should be able to
 
 This refer to the designing,building and conceptuatising of software for infranstructures and networks . when we are talking of computer networking this refers to the interconnection of computers across the internet 
 
-<br>
 
 
 <br>
