@@ -282,7 +282,177 @@ CIDR is a method of allocating IP addresses for efficient routing on the Interne
 A Broadcast ID is a special IP address used to transmit messages and data packets to all devices on a Local Area Network (LAN).
 A network address is a unique identifier assigned to a node or host to distinguish it from other nodes or hosts on the same network.
 
+  #   BASIC NETWORK TROUBLESHOOTING
+> Key areas of understanding
+- Manually configure  network and changiing their configuration
+- Manually configure routing and changing their configuration
+- Debug problems associoted with network
+
+> some basic network troubleshooting  commands and their function
+- ip, hostname, ss, ping, ping6, traceroute, traceroute6, tracepath, tracepath6, netcat,route
+##         INTROUDUCTION
+> what is a network troubleshouting : this refers to that aspect in computer science wheer we are dianose a network to ensure ***connectivitvity***, ***performance*** and ***functionality***
+<br>
+
+all know, linux is a flexible and has a very powerful network interface it plays a very great role in network troubleshooting and configuration within ipv4 and ipv6 networks
+<br/>
+- The main toool network troubleshooting are called * packet sniffers * such as the tcpdump and are useful in troubleshooting.
+
+> As simple denition we could think of packet sniffers as tools that allows you to monitor and record packets that
+  that enter or leave the neetwork interface
+- Hex viewers can be used to view packets in detail than packet sniffers 
+
+##        Netmask & routing review
+- ipv4 and ipv6 are known as ***routableprotocols*** . This means that they play a very great role in managing network trafick .
+- It also importantant to note others like Ethernet are not routableprotocols protocols because the play little or no role in handling network traffic .
+- Both ipv4 and ipv6 have two sections i.e 
+(1) network section and 
+(2) host section 
+As earlier discussed, the number of bit that make up each network section is called the ***netmask*** or ***subnetmask*** or ***prefix length***
+- The neetwork portion looks up which part to be send out on its routable in both ipv4 and ipv4
+- Its important to equally note that in asituation where the ipv4and ipv6 receives packages that are not their the try to match the device for which this was destine for
+- if destination is found the package is send otherwise a ***default route*** is created
+-  lastly if no destination is found nor a default route the package is automatically discarded .
+***This play and essential role in troubleshooting ipv4 and ipv6***
+ 
+##        configuring network interfaces
+- The 2 basic ways of configuring interfaces are: ****ip**** and ****ifconfig****
+- if config is the tools ***legacy toool*** and is the old configuration tool though not longer in use, though not really in use today like the ip 
+- Before configuring a network interface its important to first know which interfaces are available. to do we use either of the following commands: 
+(1) **ifconfig -a** 
+(2) **ip link show**
+- now assuming the /sys/class/net file system is mounted i.e
+> ls /sys/class/net 
+this will list all network that are monted on your machine
+
+now to configure a network with ifconfig 
+> ifconfig enp1so 192.168.50.50/24
+
+- It good to know tha inlinux the version of ifconfig is flexible
+> ifconfig eth2 192.168.50.50 netmask 255.255.255.0
+ ifconfig eth2 192.168.50.50 netmask 0xfffffff00
+ ifconfig enp0s8 add 2001:db8::10/64
+
+- it should be noted that the case of ipv6 ***add*** was use
+- to configure network interfaces using ip:
+> ip addr add 192.168.5.5/24 dev enp0s8
+ip addr add 2001:db8 ::10/ dev en0ps8
+
+- we see that this works for both ipv4 and ipv6
+
+
+## configuring low  level interfaces
+- The command use here is the ***ip link*** and is use in confiring low level interfaces like MTU, VLAN etc
+- ip perform common task such as to enable or disable interfaces
+> ip link set dev enp0s8 down
+  ip link show dev enp0s8
+  ifconfig up enp0s8
+  ip show dev enp0s8
+
+# Routing Table
+- tools like ***route***, ***netsta -r***, ***ip route*** are use in viewing the routing table
+- to view the routing the routing table for ipv6 use:
+  (1) ***route -6***
+  (2) ***netstat -r6***
+  (3) ***ip route -6***
+- it should be noted that the ouput of netstat -r6 and route -6
+
+***some paremeters and their significance when using rout commands***
+(1)U-flag : This flag indicates the route is up
+(2) ! : means reject route i.e route wont be used
+(3)n-flag : Thsi flag means the rroute hasn't been cache i.e th kernel keeps track of the the route separately from other route
+(4)G-flag : This flag indicates a gateway to the neetwork
+(5) Metric or Met: This is not store within the kernel and refers to adminisrtative distance to the target . Think of the ***adminisrative distance*** as the distance used by routing protocols to det emine dynamic route.
+(6)ref-column : refernce accout or simply number of use in use and not foud also used by the kernel
+(7)use-colunm : this shows the number of lookups for a route
+(8)MMS: Found in nestat -r and indicates the max segment size in TCP connection over the route
+(9)window -colunm : shows the defoult TCP window size
+(10)irrt: shows the shows the round trip packets on this route
+
+## managing network interfaces
+- route can be manage usig the ***route*** or ***ip route***
+- To add an unterface using route
+> ping6 -c 2 2001:db8:1::20
+ route -6 add 2001:db8:1::/64 gw 2001:db8::3
+ ping6 -c 2 2001:db8:1::20
+- to remove interface using routableprotocols
+
+> route -6 del 2001:db8:1::/64 gw 2001:db8::3
+ping6 -c 2 2001:db8:1::20 
+
+**lesson 3** : 
+As earlier mention linux has alot of tools for troubleshooting a neetwork with. in this section we are expected to have a brief knowlege of the OSI layer.
+
+## Testing Network Connection
+
+**ping** and ***ping 6*** are use both use to send ICMP echo request to ipv4 and ipv6 respectively
+
+- An ICMP echo request send a smal amount of data to the destination address. if not reachable it will send an echo reply message to the seder with the same data that was send  to it.
+> ping -c 3 192.168.50.2
+  ping6 -c 3 2001:db8::10
   
+  - It should be noted that the -c option specify the number of packets to send others ping will continue sending the packet unless stop ctrl + c on your keyboard
+  >It should be noted that you can't ping a hos does meam you can't connect
+
+***traceroute*** and ***traceroute6*** can both be use to monitor the route a packet takes to reach its destination
+how is done?  They do so by sending multiple packets to the destination incrementing the Time-To-live of the header with each subsequent packet .
+Each router will then respond with an TTL exceeded ICMP message
+
+>  traceroute 192.168.1.20
+   traceroute6 2001:db8::11
+   
+   by default traceroute send package to port number 33438 incrementing it each time a packet is send .
+   
+   > using traceroute with the -I option enables you to use echo ICMP request insead of of UDP. this very effective because the destination host is more likely to respond to ICMP than UDP 
+
+   traceroute -I learning.lpi.org
+   In some scenarios an organization block their ICMP echo request and replies. To get aroud this you can use a known TCP port that guarantee you with the fact that the destination host will respond .
+   
+   - to use the TCP use the -T option along -p option to specify the port . 
+   > traceroute -m 60 -T -p 80
+learning.lpi.org
+
+## Finding MTUs with tracepath
+- the tracepath is semilar to the trraceroute but the difference is that it is use to ***Maximum Transmission Units***,MTU along the path
+- The MTU is either configure interface on anetwork or a hardware limitation of the largest protocol data unit that it can transmit
+- so the key difference is that tracepath uses very large UDP datagram unlike traceroute.
+
+> tracepath 192.168.1.20
+tracepath 2001:db8::11
+tracepath6 2001:db8::11
+
+The advantage of tracepath over  traceroute is on the last it ouput the smallest on the entire link. this very useful in troubleshouting connections that con't handle fragments. 
+
+## creationg arbritrary connections
+The nc program, known as netcat, can send or receive arbitrary data over a TCP or UDP network
+connection. The following examples should make its functionality clear.
+> nc -l 1234
+
+- The output of LPI Example appears after the example below, which is setting up a netcat sender
+to send packets to net2.example.net on port 1234. The -l option is used to specify that you wish
+for nc to receive data instead of send it. 
+
+>  nc net2.example.net 1234
+Press Ctrl + C on either system to stop the connection.
+
+- Netcat works with both IPv4 and IPv6 addresses. It works with both TCP and UDP. It can even be
+used to setup a crude remote shell.
+- Note that not every installation of nc supports the -e
+
+> hostname
+net2
+ nc -u -e /bin/bash -l 1234
+
+ - The -u option is for UDP. -e instructs netcat to send everything it receives to standard input of the
+executable following it. In this example, /bin/bash.
+
+## viewing status of current connections and listeners
+
+The netstat and ss programs can be used to view the status of your current listeners and
+connections. As with ifconfig, netstat is a legacy tool
+-The examples below show the output of a commonly used set of options for both programs:
+>  netstat -tulnp
+ss -tulnp
 
 
 
