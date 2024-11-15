@@ -4,16 +4,19 @@
          
 ## <font color="blue" align ="right"><center> CHAPTER LESSONS 
 <br>
-1- FUNDAMENTALS OF NETWORK PROTOCOLS
+1- FUNDAMENTALS OF NETWORK PROTOCOLS --------> TCHANKOUMI USHER PHARELL BLONDI 
 
-<br>
-2- PERSISTENT NETWORK CONFIGURATION 
+
+
+2- PERSISTENT NETWORK CONFIGURATION ----------> CELINE-CORALIE ENI BINA 
  
-<br>
-3- BASIC NETWORK TROUBLESHOOTING
 
-<br>
-4- CONFIGURE CLIENT DNS </font>
+
+3- BASIC NETWORK TROUBLESHOOTING--------------> TEGHA ROMEO
+
+
+
+4- CONFIGURE CLIENT DNS -----------------------> CELINE-CORALIE ENI BINA & TCHANKOUMI USHER PHARELL BLONDI 
    
   <br>
 
@@ -115,6 +118,9 @@ Then a bitwise AND($) between the 02 will give me a result of  11000000 and that
 that is having an IP address 192.168.0.128 converted to binary give 11000000.10101000.00000000.10000000 and then negating the Netmask will give instead of 11111111.11111111.11111111.00000000 will be converted to 00000000.00000000.00000000.11111111 and then an OR operation will be aply with the IP address and the result obtained will be our Broadcast address.
   
    More information about our addresses can be seen through the ifconfig command 
+   
+  CIDR : name fully as CLASS INTER DOMAIN ROUTINE :This allows networks routers to route data packets to the respective device based on the indicated subnet
+  
 
    Know we will see how data is being transfer through the network and we will use one of the great model that has been used till up date called the OSI MODEL.
 
@@ -453,6 +459,121 @@ connections. As with ifconfig, netstat is a legacy tool
 -The examples below show the output of a commonly used set of options for both programs:
 >  netstat -tulnp
 ss -tulnp
+
+
+ ## LESSON 4 : CONFIGURE CLIENT ADDRESS DNS
+  
+   At the end of this lesson  we should be able to 
+      
+- EXplain what is meant by NAME RESOLUTION 
+ 
+- know what is all about  DNS classes and their signification 
+
+- know how to resolve namesnames usind DNS 
+
+- know what all about is the comand  the /etc/nsnwitch.conf ,/etc/resolv.conf, /etc/hosts 
+- kmow about SYSTEMD-RESOLVE
+
+- know some reolution tool and know how  each of them are applied 
+
+
+### INTRODUCTION 
+
+ - #### NAME RESOLUTION 
+This is the  process of converting names into IP address  so that  computers  can communnincate with each other ..It can also be define as the process of associating names and IP address
+ 
+ Program resolving names uses functions proided by  the standard libary that in linux is called the GNU project glibc .This function will read the file /etc/nsswith.conf which will give information  about how to resolve to resolve this type of name .As this /etc/nswitch.conf supports pluggin then anything can folow. 
+
+- #### WHAT IS ALL ABOUT /ETC/NSSWITCH. CONF??
+This  is a file that contain instruction on how to resolve a particular type of name . This can be display  using the command  
+
+                     cat /etc/nsnwitch.conf 
+
+ In this file the first coloumn on the left is the name database while on the right coloumn we have  sources .If the user is looking for a particuler host name  it will move on the left and look on the line starting with host then it will resolve the name using DNS 
+   
+   If  you see [!unavail=return]  this means if DNS  is unavailable then dont move to the next source but if  DNS is available move to the next source 
+
+   If you have  on the source coloumn [result=action] this means that when a you look up at the name on the left coloumn if what is found on the right coloumn can resolve it then perform an action , but if a ! is place infront of result then this means that if what is found on the next coloumn cannot resolve the name then still perdform action .
+   
+   If a process is trying to resolve a port number to a service ,it will find for athe service line in the first coloumn.The first source listed is the NIS (Network INformation Service) 
+
+   If on the source coloumn there is [ NOT FOUND=RETURN ]  this means that if the service is not found stop looking up and return . SO these are the information that ca  be found under the /etc/nsswitch.conf
+
+
+- #### WHAT IS A DNS AND WHAT ARE IT'S DIFFERENT CLASSES??
+ DNS in full can define as DOMAIN NAME SYSTEM, It turns domain names into IP address which browsers use to loads the Internet.
+ 
+ A DNS CLASS is a static class that retrieves information about  a specific host from The Internet  Domain Name System (DNS). There exist 03 classes of DNS that are IN(INTERNET),CH(CHAOSNET)and HS (HESOID).
+ 
+- ##### Internet 
+This class is for internet addreses using the TCP/IP stack , this indicate that a particular record is of the internet class 
+
+- ##### CHAOSNET 
+This class is used to simulate wrong DNS responses 
+
+- ##### HESOID
+It uses DNS functionality to provide access to databases of information that change infrequently.some examples of database that cahnge inrequently are /etc/passwd and /etc/groups.
+
+ 
+- #### WHAT IS ALL ABOUT /ETC/RESOLV.CONF ??
+It is used to configure host resolution via DNS.IT defines how the system uses DNS to resolv host names $ IP address .
+
+Information about this file can be dispaly using the command  
+      
+                  cat /etc/resolv.conf
+Here you cand find the IPv4 and IPV6 address of a DNS server 
+
+- #### WHAT IS ALL ABOUT /ETC/HOSTS FILE ??
+This File is used to resolve  names to IP address and vice versa.On the left coloumn there are IP address and on the right are names associated with those Address 
+..Information about the file can be display using the command 
+                        
+                  cat /etc/hosts
+
+
+
+- #### SYSTEMD-RESOLVED 
+It provides a service  known as systemd-resolved that provide network name resolution to local to local applications.
+It provide LLMNR (link-local MUlticast Name Resolution)resolver and MulticastDNS resolver and responder
+ 
+- #### NAMING REOLUTION TOOL
+ These are tools use during name reolution .There exist many naming resolution tool but we are to focus only on three on these lesson 
+
+1- GETEND
+This tool is use to display entries from a name service database ex..
+                         
+                         getent hosts 
+This will list all the host but you can specify the host you want depending on the  result of this command 
+
+ You can use the option -s to force getent to use a specific data source ex of source can be files
+  
+2-HOSTS
+
+It is asimple program for looking up DNS entries ,If host is given a name it will retu
+rn an AAAA and SMX record where AAAA will provide the IPV6 address of the name and MX will provide the mail of the name .Both SMX and AAAA are records type 
+
+ You can use the -t option to specify the record type that is 
+
+               host -t [record type] [domain]
+ 
+
+3-DIG
+    
+It have for full meaning Domain INformation Groper.It is a flexible tool for interogating DNS servers. It performs DNS lookup and display the answer that are returned from the queried name servers .It is more suited for troubleshooting 
+ 
+So you can place dig with the database name  that is
+
+                    dig [ database name ]
+
+ Just like host you can specify a given record type using the same  command syntax..Dig have also other  option like
+ 
+ - +SHORT: This option can be used to suppress the given informstion and take only the needed one 
+
+ - NO : This is use when you want to display everthing exept a paticular one .this can be expressed as 
+                   
+                dig +nocookie -t MX lpi.org
+
+  SO we are at the end of the cahpter NETWORKING I hope everyone understood what networking is all about .. see you next 
+
 
 
 
