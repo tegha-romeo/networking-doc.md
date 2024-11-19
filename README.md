@@ -296,14 +296,14 @@ A network address is a unique identifier assigned to a node or host to distingui
 > some basic network troubleshooting  commands and their function
 - ip, hostname, ss, ping, ping6, traceroute, traceroute6, tracepath, tracepath6, netcat,route
 ##         INTROUDUCTION
-> what is a network troubleshouting : this refers to that aspect in computer science wheer we are dianose a network to ensure ***connectivitvity***, ***performance*** and ***functionality***
+- what is a network troubleshouting : this refers to that aspect in computer science wheer we are dianose a network to ensure ***connectivitvity***, ***performance*** and ***functionality***
 <br>
 
 all know, linux is a flexible and has a very powerful network interface it plays a very great role in network troubleshooting and configuration within ipv4 and ipv6 networks
 <br/>
 - The main toool network troubleshooting are called * packet sniffers * such as the tcpdump and are useful in troubleshooting.
 
-> As simple denition we could think of packet sniffers as tools that allows you to monitor and record packets that
+- As simple denition we could think of packet sniffers as tools that allows you to monitor and record packets that
   that enter or leave the neetwork interface
 - Hex viewers can be used to view packets in detail than packet sniffers 
 
