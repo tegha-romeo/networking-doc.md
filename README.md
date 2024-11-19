@@ -331,32 +331,42 @@ As earlier discussed, the number of bit that make up each network section is cal
 this will list all network that are monted on your machine
 
 now to configure a network with ifconfig 
-> ifconfig enp1so 192.168.50.50/24
+> ifconfig <interface_name> <IP_address> netmask <subnet_mask>
 
-- It good to know tha inlinux the version of ifconfig is flexible
-> ifconfig eth2 192.168.50.50 netmask 255.255.255.0
- ifconfig eth2 192.168.50.50 netmask 0xfffffff00
- ifconfig enp0s8 add 2001:db8::10/64
+> ifconfig <interface> inet6 add <IPv6_address>/prefix_length
+ 
+- to verify if your interface was sucessfully configured:
+   
+> ifconfig <interface>
+
+- to configure your interface using ip
+  
+> sudo ip addr add <IP_address>/prefix_length dev <interface>
+
+-to see if you succesfully configured you interface with ip
+
+> ip addr show <interface>
 
 - it should be noted that the case of ipv6 ***add*** was use
-- to configure network interfaces using ip:
-> ip addr add 192.168.5.5/24 dev enp0s8
-ip addr add 2001:db8 ::10/ dev en0ps8
-
+  
 - we see that this works for both ipv4 and ipv6
-
 
 ## configuring low  level interfaces
 - The command use here is the ***ip link*** and is use in confiring low level interfaces like MTU, VLAN etc
-- ip perform common task such as to enable or disable interfaces
-> ip link set dev enp0s8 down
-  ip link show dev enp0s8
-  ifconfig up enp0s8
-  ip show dev enp0s8
+- For example to configure the MTU interface :
+> sudo ip link set dev <interface> mtu <mtu_value>
+- To verify if your MTU have been configured :
+> ip link show <interface>
+- To through more light on MTU, an MTU is the largest size of packet that can be transfer over a network without fragmentation
+## Typical MTU rangses
+- ethernet : 1500(default)
+- ipv6 : 1280(minimum)
+- some network even allow up to 9000 (jombo frame) depending on the hardware and configuration of the system
 
 # Routing Table
-- tools like ***route***, ***netsta -r***, ***ip route*** are use in viewing the routing table
-- to view the routing the routing table for ipv6 use:
+- A routing table is a database in a router or host that contains rules to determine where to forward network packets. It includes information like destination IP addresses, subnet masks, gateways, and interfaces.
+- Tools like ***route***, ***netstat -r***, ***ip route*** are use in viewing the routing table
+- To view the routing the routing table for ipv6 use:
   (1) ***route -6***
   (2) ***netstat -r6***
   (3) ***ip route -6***
@@ -376,42 +386,69 @@ ip addr add 2001:db8 ::10/ dev en0ps8
 
 ## managing network interfaces
 - route can be manage usig the ***route*** or ***ip route***
-- To add an unterface using route
-> ping6 -c 2 2001:db8:1::20
- route -6 add 2001:db8:1::/64 gw 2001:db8::3
- ping6 -c 2 2001:db8:1::20
-- to remove interface using routableprotocols
+- route (deprecated but still used):
 
-> route -6 del 2001:db8:1::/64 gw 2001:db8::3
-ping6 -c 2 2001:db8:1::20 
+ - View routes: route -n
+ > Add a route: route add -net <destination> netmask <netmask> gw <gateway> dev <interface>
+ >  Delete a route: route del -net <destination> netmask <netmask>
 
-**lesson 3** : 
+ip route (modern alternative):
+
+- View routes: ip route show
+> Add a route: ip route add <destination>/<prefix> via <gateway> dev <interface>
+> Delete a route: ip route del <destination>/<prefix>
+
+Example:
+- To add a route for 192.168.1.0/24 via gateway 192.168.0.1 on eth0:
+
+> route: route add -net 192.168.1.0 netmask 255.255.255.0 gw 192.168.0.1 dev etho
+> ip route: ip route add 192.168.1.0/24 via 192.168.0.1 dev eth0
+
+##  : 
 As earlier mention linux has alot of tools for troubleshooting a neetwork with. in this section we are expected to have a brief knowlege of the OSI layer.
 
 ## Testing Network Connection
 
+(1) Ping test of network connectivity
+
 **ping** and ***ping 6*** are use both use to send ICMP echo request to ipv4 and ipv6 respectively
 
 - An ICMP echo request send a smal amount of data to the destination address. if not reachable it will send an echo reply message to the seder with the same data that was send  to it.
-> ping -c 3 192.168.50.2
-  ping6 -c 3 2001:db8::10
+- Test connectivity to a host:
+
+- ping <hostname_or_IP>
+
+Example:
+
+> ping google.com
+
+Test connectivity to a specific IP address:
+
+- ping 192.168.1.1
   
-  - It should be noted that the -c option specify the number of packets to send others ping will continue sending the packet unless stop ctrl + c on your keyboard
-  >It should be noted that you can't ping a hos does meam you can't connect
+Test connectivity for specified number of packets
+
+- ping -c 5 google.com
+
+ - It should be noted that the -c option specify the number of packets to send others ping will continue sending the packet unless stop ctrl + c on your keyboard
+ - It should be noted that you can't ping a host does mean you can't connect
 
 ***traceroute*** and ***traceroute6*** can both be use to monitor the route a packet takes to reach its destination
 how is done?  They do so by sending multiple packets to the destination incrementing the Time-To-live of the header with each subsequent packet .
 Each router will then respond with an TTL exceeded ICMP message
 
->  traceroute 192.168.1.20
-   traceroute6 2001:db8::11
-   
-   by default traceroute send package to port number 33438 incrementing it each time a packet is send .
-   
-   > using traceroute with the -I option enables you to use echo ICMP request insead of of UDP. this very effective because the destination host is more likely to respond to ICMP than UDP 
+- Trace the path to a host:
+
+traceroute <hostname_or_IP>
+
+Example:
+
+> traceroute google.com
+
+- using traceroute with the -I option enables you to use echo ICMP request insead of of UDP. this very effective because the destination host is more likely to respond to ICMP than UDP 
 
    traceroute -I learning.lpi.org
-   In some scenarios an organization block their ICMP echo request and replies. To get aroud this you can use a known TCP port that guarantee you with the fact that the destination host will respond .
+  - In some scenarios an organization block their ICMP echo request and replies. To get aroud this you can use a known TCP port that guarantee you with the fact that the destination host will respond .
    
    - to use the TCP use the -T option along -p option to specify the port . 
    > traceroute -m 60 -T -p 80
@@ -419,45 +456,109 @@ learning.lpi.org
 
 ## Finding MTUs with tracepath
 - the tracepath is semilar to the trraceroute but the difference is that it is use to ***Maximum Transmission Units***,MTU along the path
-- The MTU is either configure interface on anetwork or a hardware limitation of the largest protocol data unit that it can transmit
-- so the key difference is that tracepath uses very large UDP datagram unlike traceroute.
+- so the key difference is that tracepath uses very large UDP datagram unlike traceroute
+- To find the Maximum Transmission Unit (MTU) using the tracepath command:
 
-> tracepath 192.168.1.20
-tracepath 2001:db8::11
-tracepath6 2001:db8::11
+ Run the command:
+
+  sytax   tracepath <destination>
+
+  Interpret the result:
+        tracepath sends packets with incrementally increasing hop counts to the destination.
+        It displays the smallest MTU encountered along the path.
+        Look for lines like pmtu 1500, where 1500 is the MTU size.
+
+Example:
+
+tracepath google.com
 
 The advantage of tracepath over  traceroute is on the last it ouput the smallest on the entire link. this very useful in troubleshouting connections that con't handle fragments. 
 
 ## creationg arbritrary connections
-The nc program, known as netcat, can send or receive arbitrary data over a TCP or UDP network
-connection. The following examples should make its functionality clear.
-> nc -l 1234
+-Netcat (nc) is a versatile networking utility used to read and write data across network connections. It operates using TCP or UDP protocols. Here's a brief explanation of how it works:
 
-- The output of LPI Example appears after the example below, which is setting up a netcat sender
-to send packets to net2.example.net on port 1234. The -l option is used to specify that you wish
-for nc to receive data instead of send it. 
+ Listening Mode (Server):
+    Netcat can listen for incoming connections on a specific port.
+    Example:
 
->  nc net2.example.net 1234
-Press Ctrl + C on either system to stop the connection.
+nc -l -p 1234
 
-- Netcat works with both IPv4 and IPv6 addresses. It works with both TCP and UDP. It can even be
-used to setup a crude remote shell.
-- Note that not every installation of nc supports the -e
+  -l: Listen mode.
+ -p: Specify the port.
 
-> hostname
-net2
- nc -u -e /bin/bash -l 1234
+Connection Mode (Client):
+It can initiate a connection to a server and send or receive data.
+Example:
 
- - The -u option is for UDP. -e instructs netcat to send everything it receives to standard input of the
-executable following it. In this example, /bin/bash.
+nc <host> 1234
+
+Data Transfer:
+Netcat sends data from one machine to another, allowing file transfer or chat-like communication.
+
+Port Scanning:
+It can check open ports on a target.
+Example:
+
+  nc -zv <host> <port-range>
+
+  -z: Scan mode (no data transfer).
+  -v: Verbose output.
+
+- Testing Services:
+   Netcat can connect to a service (e.g., HTTP, SMTP) to send raw commands and view responses.
+
+Netcat is simple yet powerful, often used for debugging, scripting, and network testing.
+
+
 
 ## viewing status of current connections and listeners
 
-The netstat and ss programs can be used to view the status of your current listeners and
-connections. As with ifconfig, netstat is a legacy tool
--The examples below show the output of a commonly used set of options for both programs:
->  netstat -tulnp
-ss -tulnp
+(1) Using ss:
+
+ss is a powerful tool for displaying socket statistics and analyzing current network connections and listening ports.
+
+- View all connections:
+
+> ss -a
+
+- Show listening ports:
+
+> ss -l
+
+Filter by protocol (e.g., TCP or UDP):
+
+> ss -t   # Show TCP connections
+> ss -u   # Show UDP connections
+
+Include process information:
+
+> ss -tulpn
+
+ -tulpn: Shows TCP/UDP listening ports with process names and PIDs.
+
+Using netcat (nc):
+
+netcat can also be used to check listening ports by attempting connections.
+
+- Scan local open ports:
+
+> nc -zv 127.0.0.1 1-65535
+
+ -z: Scan mode (no data sent).
+ -v: Verbose output.
+
+Check if a specific port is open:
+
+> nc -zv <host> <port>
+
+Example:
+
+> nc -zv localhost 80
+
+Summary: so the key difference here is 
+
+  Use ss for detailed and real-time insights into connections and listening ports while
+  Use netcat for simple port scanning and testing connectivity.
 
 
  ## LESSON 4 : CONFIGURE CLIENT ADDRESS DNS
@@ -576,6 +677,119 @@ So you can place dig with the database name  that is
 
 
 
+
+ ## LESSON 4 : CONFIGURE CLIENT ADDRESS DNS
+  
+   At the end of this lesson  we should be able to 
+      
+- EXplain what is meant by NAME RESOLUTION 
+ 
+- know what is all about  DNS classes and their signification 
+
+- know how to resolve namesnames usind DNS 
+
+- know what all about is the comand  the /etc/nsnwitch.conf ,/etc/resolv.conf, /etc/hosts 
+- kmow about SYSTEMD-RESOLVE
+
+- know some reolution tool and know how  each of them are applied 
+
+
+### INTRODUCTION 
+
+ - #### NAME RESOLUTION 
+This is the  process of converting names into IP address  so that  computers  can communnincate with each other ..It can also be define as the process of associating names and IP address
+ 
+ Program resolving names uses functions proided by  the standard libary that in linux is called the GNU project glibc .This function will read the file /etc/nsswith.conf which will give information  about how to resolve to resolve this type of name .As this /etc/nswitch.conf supports pluggin then anything can folow. 
+
+- #### WHAT IS ALL ABOUT /ETC/NSSWITCH. CONF??
+This  is a file that contain instruction on how to resolve a particular type of name . This can be display  using the command  
+
+                     cat /etc/nsnwitch.conf 
+
+ In this file the first coloumn on the left is the name database while on the right coloumn we have  sources .If the user is looking for a particuler host name  it will move on the left and look on the line starting with host then it will resolve the name using DNS 
+   
+   If  you see [!unavail=return]  this means if DNS  is unavailable then dont move to the next source but if  DNS is available move to the next source 
+
+   If you have  on the source coloumn [result=action] this means that when a you look up at the name on the left coloumn if what is found on the right coloumn can resolve it then perform an action , but if a ! is place infront of result then this means that if what is found on the next coloumn cannot resolve the name then still perdform action .
+   
+   If a process is trying to resolve a port number to a service ,it will find for athe service line in the first coloumn.The first source listed is the NIS (Network INformation Service) 
+
+   If on the source coloumn there is [ NOT FOUND=RETURN ]  this means that if the service is not found stop looking up and return . SO these are the information that ca  be found under the /etc/nsswitch.conf
+
+
+- #### WHAT IS A DNS AND WHAT ARE IT'S DIFFERENT CLASSES??
+ DNS in full can define as DOMAIN NAME SYSTEM, It turns domain names into IP address which browsers use to loads the Internet.
+ 
+ A DNS CLASS is a static class that retrieves information about  a specific host from The Internet  Domain Name System (DNS). There exist 03 classes of DNS that are IN(INTERNET),CH(CHAOSNET)and HS (HESOID).
+ 
+- ##### Internet 
+This class is for internet addreses using the TCP/IP stack , this indicate that a particular record is of the internet class 
+
+- ##### CHAOSNET 
+This class is used to simulate wrong DNS responses 
+
+- ##### HESOID
+It uses DNS functionality to provide access to databases of information that change infrequently.some examples of database that cahnge inrequently are /etc/passwd and /etc/groups.
+
+ 
+- #### WHAT IS ALL ABOUT /ETC/RESOLV.CONF ??
+It is used to configure host resolution via DNS.IT defines how the system uses DNS to resolv host names $ IP address .
+
+Information about this file can be dispaly using the command  
+      
+                  cat /etc/resolv.conf
+Here you cand find the IPv4 and IPV6 address of a DNS server 
+
+- #### WHAT IS ALL ABOUT /ETC/HOSTS FILE ??
+This File is used to resolve  names to IP address and vice versa.On the left coloumn there are IP address and on the right are names associated with those Address 
+..Information about the file can be display using the command 
+                        
+                  cat /etc/hosts
+
+
+
+- #### SYSTEMD-RESOLVED 
+It provides a service  known as systemd-resolved that provide network name resolution to local to local applications.
+It provide LLMNR (link-local MUlticast Name Resolution)resolver and MulticastDNS resolver and responder
+ 
+- #### NAMING REOLUTION TOOL
+ These are tools use during name reolution .There exist many naming resolution tool but we are to focus only on three on these lesson 
+
+1- GETEND
+This tool is use to display entries from a name service database ex..
+                         
+                         getent hosts 
+This will list all the host but you can specify the host you want depending on the  result of this command 
+
+ You can use the option -s to force getent to use a specific data source ex of source can be files
+  
+2-HOSTS
+
+It is asimple program for looking up DNS entries ,If host is given a name it will retu
+rn an AAAA and SMX record where AAAA will provide the IPV6 address of the name and MX will provide the mail of the name .Both SMX and AAAA are records type 
+
+ You can use the -t option to specify the record type that is 
+
+               host -t [record type] [domain]
+ 
+
+3-DIG
+    
+It have for full meaning Domain INformation Groper.It is a flexible tool for interogating DNS servers. It performs DNS lookup and display the answer that are returned from the queried name servers .It is more suited for troubleshooting 
+ 
+So you can place dig with the database name  that is
+
+                    dig [ database name ]
+
+ Just like host you can specify a given record type using the same  command syntax..Dig have also other  option like
+ 
+ - +SHORT: This option can be used to suppress the given informstion and take only the needed one 
+
+ - NO : This is use when you want to display everthing exept a paticular one .this can be expressed as 
+                   
+                dig +nocookie -t MX lpi.org
+
+  SO we are at the end of the cahpter NETWORKING I hope everyone understood what networking is all about .. see you next 
 
 
 
